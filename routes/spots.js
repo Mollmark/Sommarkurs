@@ -19,7 +19,7 @@ db.open(function(err, db) {
     }
 });
  
-exports.findById = function(req, res) {
+surfSpots.findById = function(req, res) {
     var id = req.params.id;
     console.log('Get spot: ' + id);
     db.collection('spots', function(err, collection) {
@@ -29,7 +29,7 @@ exports.findById = function(req, res) {
     });
 };
  
-exports.findAll = function(req, res) {
+surfSpots.findAll = function(req, res) {
     db.collection('spots', function(err, collection) {
         collection.find().toArray(function(err, items) {
             res.send(items);
@@ -37,7 +37,7 @@ exports.findAll = function(req, res) {
     });
 };
  
-exports.addSpot = function(req, res) {
+surfSpots.addSpot = function(req, res) {
     var spot = req.body;
     console.log('Adding spot: ' + JSON.stringify(spot));
     db.collection('spots', function(err, collection) {
@@ -52,7 +52,7 @@ exports.addSpot = function(req, res) {
     });
 }
  
-exports.updateSpot = function(req, res) {
+surfSpots.updateSpot = function(req, res) {
     var id = req.params.id;
     var spot = req.body;
     console.log('Updating spot: ' + id);
@@ -70,7 +70,7 @@ exports.updateSpot = function(req, res) {
     });
 }
  
-exports.deleteSpot = function(req, res) {
+surfSpots.deleteSpot = function(req, res) {
     var id = req.params.id;
     console.log('Deleting spot: ' + id);
     db.collection('spots', function(err, collection) {
