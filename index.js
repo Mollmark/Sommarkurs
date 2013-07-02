@@ -73,6 +73,10 @@ surfSpoter.Router = Backbone.Router.extend({
 
                 root.append(spotsFeedView.render().el);
 
+                //Fix for some DOM-rendering problem
+                //#home = page id
+                $("#home").trigger("create");
+
             }
         });
     }
