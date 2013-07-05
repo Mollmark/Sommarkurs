@@ -1,4 +1,4 @@
-surfSpoter.spotsFeed = Backbone.View.extend({
+surfSpoter.searchSpot = Backbone.View.extend({
 
 	render:function () {
 	

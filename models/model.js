@@ -1,9 +1,9 @@
 //------------------------MODELS-----------------------
 //Spots
-surfSpoter.spotsFeedModel = Backbone.Model.extend({
+surfSpoter.spotsModel = Backbone.Model.extend({
 
     initialize:function () {
-        this.spots = new surfSpoter.spotsFeedCollection();
+        this.spots = new surfSpoter.spotsCollection();
         this.spots.parent = this;
     },
 
@@ -21,11 +21,29 @@ surfSpoter.spotsFeedModel = Backbone.Model.extend({
 });
 
 
+//One singel spot
+surfSpoter.spotModel = Backbone.Model.extend({
+
+    sync: function(method, model, options) {
+        if (method === "read") {
+
+                surfSpoter.applicationData.getSpotById(this.id,function (data) {
+
+                options.successCallback(data);
+                
+            });
+        }
+    }
+
+
+});
+
+
 //---------------COLLECTIONS--------------------------
 //Spots
-surfSpoter.spotsFeedCollection = Backbone.Collection.extend({
+surfSpoter.spotsCollection = Backbone.Collection.extend({
 
-    model: surfSpoter.spotsFeedModel,
+    model: surfSpoter.spotsModel,
 
     sync: function(method, model, options) {
         if (method === "read") {
@@ -56,6 +74,28 @@ surfSpoter.dataManager = function (successCallback, errorCallback) {
 
                 callback(data);
 
+
+            },
+            error: function(object, error) {
+                console.log(error);
+            }
+        });
+
+    };
+
+    this.getSpotById = function (id, callback) {
+
+    var url = "http://127.0.0.1:3000/spots/"+id;
+    console.log(url);
+    $.ajax({
+
+            dataType: "json",
+            url: url,
+            type: "GET",
+
+            success: function (data) {
+
+                callback(data);
 
             },
             error: function(object, error) {

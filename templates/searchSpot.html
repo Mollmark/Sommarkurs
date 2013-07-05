@@ -1,0 +1,14 @@
+<ul data-role="listview" data-theme="c" data-inset="true" data-filter="true" data-filter-placeholder="Sök spots...">
+
+	<% _.each(this.model, function(spot) { %>
+
+		<li>
+			<a href="#spots#<%=spot._id%>">
+			<h1><%= spot.name %></h1>
+			<img src="pics/surf.jpg">
+			<p><%= spot.description %></p>
+			</a>
+		</li>
+
+	<% }); %>
+</ul>

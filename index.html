@@ -22,7 +22,8 @@
 	    	<a href="#settings">Settings</a>
 	    </div>
         <div data-role="content" id="homeContent">           
-        	<p>Your spots</p>
+        	<p>Your spots:</p>
+        	<p>Available soon</p>
 
         	<div id="appContent">
 			<!-- TEMPLATES CONTENTS GOES HERE -->
@@ -69,26 +70,20 @@
     </div><!-- Page -->
 
 
-
 	<!--SEARCH SURFSPOT-->
 	<div data-role="page" id="search" data-theme="f">
 	<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
 
     <div data-role="header" data-theme="f">
     	<a href="#home" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f">Home</a>
-    	<h1>Search</h1>
+    	<h1>Sök efter spots</h1>
     	<a href="#settings">Settings</a>
     </div>
  
         <div data-role="content">           
-			<ul data-role="listview" data-theme="c" data-inset="true" data-filter="true" data-filter-placeholder="Sök spots...">
-
-				    <li data-icon="star"><a href="#"><h1>Bra spot</h1> <img src="pics/surf.jpg" /><p>Här kan man surfa jättebra</p></a></li>
-				    <li><a href="#">Surf</a></li>
-				    <li><a href="#">kkkk</a></li>
-				    <li><a href="#">Haga</a></li>
-				    <li><a href="#">Sand</a></li>			 
-			</ul>
+			<div id="searchContent">
+			<!-- TEMPLATES CONTENTS GOES HERE -->
+			</div>
         </div>
  
         <div data-role="footer" data-theme="f" data-position="fixed">
@@ -102,6 +97,7 @@
         </div>
     </div><!-- Page -->
 
+
     <!--INFO-->
 	<div data-role="page" id="info" data-theme="f">
 		<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
@@ -111,7 +107,7 @@
 	    	<h1 class="logo">Surfspoter</h1>
 	    	<a href="#settings">Settings</a>
 	    </div>
-        <div data-role="content" id="homeContent">           
+        <div data-role="content">           
 
 			<p>Info is comming soon!</p>	 		 
 		
@@ -128,18 +124,21 @@
         </div>
     </div><!-- Page -->
 
-    <!--SETTINGS-->
-	<div data-role="page" id="settings" data-theme="f">
+
+    <!--SPOT DETAILS-->
+	<div data-role="page" id="spots" data-theme="f">
 		<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
 
 	    <div data-role="header" data-theme="f">
 	    	<a href="#home" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f">Home</a>
-	    	<h1 class="logo">Surfspoter</h1>
+	    	<h1 class="logo">Spot</h1>
 	    	<a href="#settings">Settings</a>
 	    </div>
-        <div data-role="content" id="homeContent">           
-
-			<p>Settings not available yet</p>	 		 
+        <div data-role="content">           
+			<div id="spotDetailsContent">
+			<!-- TEMPLATES CONTENTS GOES HERE -->
+			</div>	
+			<p>Spot details</p> 		 
 		
         </div>
  
@@ -154,6 +153,36 @@
         </div>
     </div><!-- Page -->
 
+
+    <!--SETTINGS-->
+	<div data-role="page" id="settings" data-theme="f">
+		<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
+
+	    <div data-role="header" data-theme="f">
+	    	<a href="#home" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f">Home</a>
+	    	<h1 class="logo">Surfspoter</h1>
+	    	<a href="#settings">Settings</a>
+	    </div>
+        <div data-role="content">           
+			<a href="#spots">details</a> 
+			<p>Settings not available yet</p>	
+
+		
+        </div>
+ 
+        <div data-role="footer" data-theme="f" data-position="fixed">
+            <nav data-role="navbar">
+            	<ul>
+            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+				    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
+				    <li><a href="#info" data-icon="info">Info</a></li>
+				</ul>
+			</nav>
+        </div>
+    </div><!-- Page -->
+
+
+
 	<!--JS-Libraries-->
 	<script type="text/javascript" src="libraries/jquery.js"></script>
 	<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
@@ -161,11 +190,16 @@
     <script type="text/javascript" src="libraries/backbone.js"></script>
     <script type="text/javascript" src="libraries/moment.js"></script> 
     <script type="text/javascript" src="libraries/hammer.js"></script>
-    <script type="text/javascript" src="libraries/transit.js"></script> 
+    <script type="text/javascript" src="libraries/transit.js"></script>
+
+
+
+
 
 	<!--My applications JavaScript-->
     <script src="index.js"></script>
-    <script src="views/spotsFeed.js"></script>
+ 	<script src="views/spotDetailsView.js"></script> 
+    <script src="views/searchSpot.js"></script>
     <script src="models/model.js"></script>
 	</body>
 </html>
