@@ -1,28 +1,6 @@
 var surfSpoter = {
 
-    //Laddar de templates som applikationen senare behöver
-    loadTemplates: function(views, callback) {
-        var that = this;
-        var templates = [];
 
-        $.each(views, function(index, view) {
-
-            if (surfSpoter[view]) {
-
-                templates.push($.get('templates/' + view + '.html', function(data) {
-                    surfSpoter[view].prototype.template = _.template(data);
-                    surfSpoter[view].prototype.root = that.rootElement;
-                    surfSpoter[view].prototype.root = that.searchContent;
-                    surfSpoter[view].prototype.root = that.spotDetailsContent;
-                }, 'html'));
-
-            } else {
-                alert(view + " not found");
-            }
-        });
-
-        $.when.apply(null, templates).done(callback);
-    },
     //Constructor
     initialize: function() {
 
@@ -41,10 +19,10 @@ var surfSpoter = {
     },
 
     onDeviceReady: function() {
-        surfSpoter.loadTemplates(["searchSpot", "spotDetailsView"], function () {
-            surfSpoter.Router = new surfSpoter.Router();
-            Backbone.history.start();
-        });
+ 
+        surfSpoter.Router = new surfSpoter.Router();
+        Backbone.history.start();
+
     },
 
 };
@@ -53,14 +31,36 @@ var surfSpoter = {
 surfSpoter.Router = Backbone.Router.extend({
 
     routes: {
-        "":             "",
+        "":             "home",
         "spots#:id": 	"spotDetails", 
-        "search": 		"searchSpot",  
+        "search": 		"searchSpot",
+        "settings": 	"settings",
+        "info": 		"info",
+        "goSurf": 		"goSurf",  
      
+    },
+
+    home: function(){
+
+        this.changePage(new surfSpoter.HomeView());
+    },
+
+    info: function(){
+
+    	this.changePage(new surfSpoter.InfoView());
+    },
+
+    settings: function(){
+
+    	this.changePage(new surfSpoter.SettingsView());
     },
 
     //Listing all spots
     searchSpot: function(){
+
+    	var that = this;
+
+    	console.log("SEARCH");
        
         var searchContentDiv = surfSpoter.searchContent;
         searchContentDiv.empty();
@@ -69,17 +69,16 @@ surfSpoter.Router = Backbone.Router.extend({
 
         spots.fetch({
             successCallback: function(data) {
+            	console.log(data);
 
-                var spotsFeedView = new surfSpoter.searchSpot({
+                that.changePage(new surfSpoter.searchSpot({
 
                     model: data
-                });
-
-                searchContentDiv.append(spotsFeedView.render().el);
+                }));          
 
                 //Fix for some DOM-rendering problem with jQuery Mobile styles
                 //#search = page id
-                $("#search").trigger("create");
+                //$("#search").trigger("create");
 
             }
         });
@@ -87,6 +86,8 @@ surfSpoter.Router = Backbone.Router.extend({
 
     //Details on a certain spot with id
     spotDetails: function(id) {
+
+    	var that = this;
 
     	var spotDetailsContentDiv = surfSpoter.spotDetailsContent;
     	spotDetailsContentDiv.empty();
@@ -99,22 +100,39 @@ surfSpoter.Router = Backbone.Router.extend({
 
             successCallback: function(data) {
 
-                var spotDetailsView = new surfSpoter.spotDetailsView({
+                that.changePage(new surfSpoter.SpotDetailsView({
 
                     model: data
-                });
+                }));
+            }    
 
-                console.log(spotDetailsView.render().el);
-
-                spotDetailsContentDiv.html(spotDetailsView.render().el);
-
-
-
-            }
+            
 
         });
 
 
+    },
+
+    goSurf: function(){
+
+    	this.changePage(new surfSpoter.GoSurfView());
+
+
+    },
+
+    changePage:function (page) {
+        $(page.el).attr({'data-role': 'page', 'data-theme': 'f'});
+        page.render();
+        $('body').append($(page.el));
+        var transition = $.mobile.defaultPageTransition;
+        // We don't want to slide the first page
+        if (this.firstPage) {
+            transition = 'none';
+            this.firstPage = false;
+        }
+
+
+        $.mobile.changePage($(page.el), {changeHash:false, transition: transition});
     }
 
 });

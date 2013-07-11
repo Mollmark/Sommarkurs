@@ -1,10 +1,9 @@
-surfSpoter.searchSpot = Backbone.View.extend({
+surfSpoter.GoSurfView = Backbone.View.extend({
 
-    template:_.template($('#search').html()),
+    template:_.template($('#goSurf').html()),
 
     render:function (eventName) {
         $(this.el).html(this.template());
         return this;
     }
 });
-
