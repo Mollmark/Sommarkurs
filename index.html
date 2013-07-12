@@ -159,7 +159,7 @@
 			<li>
 				<a href="#spots#<%=spot._id%>">
 				<h1><%= spot.name %></h1>
-				<img src="pics/surf.jpg">
+				<img src="pics/<%= spot.picture %>">
 				<p><%= spot.description %></p>
 				</a>
 			</li>
@@ -197,7 +197,7 @@
 			<h1 class="spotName"><%= this.model.name %></h1><a class="followButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Follow spot</a>
 			<p class="wind"><strong>Vind: </strong><%= this.model.wind%> m/s</p>
 			<p class="wave"><strong>Vågtyp: </strong><%= this.model.wavetype%></p>
-			<img class="spotDetailsImage" src="pics/surf.jpg">
+			<img class="spotDetailsImage" src="pics/<%= this.model.picture %>">
 			<p><%= this.model.description %></p>
 			</a>
 		

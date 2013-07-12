@@ -1,4 +1,5 @@
-var mongo = require('mongodb');
+//Localy
+/*var mongo = require('mongodb');
  
 var Server = mongo.Server,
     Db = mongo.Db,
@@ -9,7 +10,7 @@ db = new Db('spotdb', server);
  
 db.open(function(err, db) {
     if(!err) {
-        console.log("failed to connect to 'surfdb' database");
+        console.log("failed to connect to 'spotdb' database");
         db.collection('spots', {strict:true}, function(err, collection) {
             if (err) {
                 console.log("The 'spots' collection dont exist. Creating it with dbseed");
@@ -17,7 +18,9 @@ db.open(function(err, db) {
             }
         });
     }
-});
+});*/
+
+
  
 exports.findById = function(req, res) {
     var id = req.params.id;

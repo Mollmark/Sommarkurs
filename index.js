@@ -117,7 +117,6 @@ surfSpoter.Router = Backbone.Router.extend({
 
     	this.changePage(new surfSpoter.GoSurfView());
 
-
     },
 
     changePage:function (page) {
