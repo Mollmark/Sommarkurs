@@ -9,6 +9,7 @@
 		<link href='http://fonts.googleapis.com/css?family=Condiment' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type="text/css" href="css/customstyle.css" />
 		<meta charset='utf-8' />
+		<script src="//connect.facebook.net/en_US/all.js"></script>
 	</head>
 	<body>
 
@@ -18,6 +19,7 @@
 
 		    <div data-role="header" data-theme="f">
 		    	<a href="#" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f"></a>
+		    	<div id="profileImg"></div>
 		    	<h1 class="logo">Surfspoter</h1>
 		    	<a href="#settings">Settings</a>
 		    </div>
@@ -28,6 +30,44 @@
 	        	<div id="appContent">
 				<!-- TEMPLATES CONTENTS GOES HERE -->
 				</div>
+					 		 		
+	        </div>
+	 
+	        <div data-role="footer" data-theme="f" data-position="fixed">
+	            <nav data-role="navbar">
+	            	<ul>
+	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
+					    <li><a href="#info" data-icon="info">Info</a></li>
+					</ul>
+				</nav>
+	        </div>
+	    </div> 
+    </script>
+
+    <!--LOG IN-->
+	<script type="text/template" id="logIn">
+		<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
+
+		    <div data-role="header" data-theme="f">
+		    	<a href="#" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f"></a>
+		    	<h1 class="logo">Surfspoter</h1>
+		    	<a href="#settings">Settings</a>
+		    </div>
+	        <div data-role="content" id="homeContent">           
+	        	<h1>Logga in</h1>
+
+				<form>
+		        	<div data-role="fieldcontain" class="ui-hide-label">
+						<label for="email">Email:</label>
+						<input type="email" name="username" id="email" value="" placeholder="Email"/>
+					</div>
+					<div data-role="fieldcontain" class="ui-hide-label">
+						<label for="password">Password:</label>
+						<input type="password" name="password" id="password" value="" placeholder="Password"/>
+					</div>
+				</form>
+
 					 		 		
 	        </div>
 	 
@@ -57,9 +97,11 @@
 	        	<p>Settings</p>
 	        	<p>Available soon!!!!!</p>
 
-	        	<div id="appContent">
-				<!-- TEMPLATES CONTENTS GOES HERE -->
-				</div>
+	        	<div id="profileImg">
+			    <fb:login-button autologoutlink="true">
+			    </fb:login-button>
+			    <div id="fb-root"></div>
+    			</div>
 					 		 		
 	        </div>
 	 
@@ -229,6 +271,8 @@
 
 	<!--My applications JavaScript-->
     <script src="index.js"></script>
+    <script src="facebook.js"></script>
+    <script src="views/logIn.js"></script>
     <script src="views/home.js"></script>
     <script src="views/info.js"></script>
     <script src="views/settings.js"></script>

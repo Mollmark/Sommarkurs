@@ -36,7 +36,8 @@ surfSpoter.Router = Backbone.Router.extend({
         "search": 		"searchSpot",
         "settings": 	"settings",
         "info": 		"info",
-        "goSurf": 		"goSurf",  
+        "goSurf": 		"goSurf",
+        "logIn": 		"logIn",  
      
     },
 
@@ -53,6 +54,11 @@ surfSpoter.Router = Backbone.Router.extend({
     settings: function(){
 
     	this.changePage(new surfSpoter.SettingsView());
+    },
+
+    logIn: function(){
+
+    	this.changePage(new surfSpoter.LogInView());
     },
 
     //Listing all spots

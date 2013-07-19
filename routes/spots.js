@@ -1,5 +1,5 @@
 //Localy
-/*var mongo = require('mongodb');
+var mongo = require('mongodb');
  
 var Server = mongo.Server,
     Db = mongo.Db,
@@ -9,18 +9,49 @@ var server = new Server('localhost', 27017, {auto_reconnect: true});
 db = new Db('spotdb', server);
  
 db.open(function(err, db) {
+
     if(!err) {
         console.log("failed to connect to 'spotdb' database");
         db.collection('spots', {strict:true}, function(err, collection) {
             if (err) {
                 console.log("The 'spots' collection dont exist. Creating it with dbseed");
                 dbSeed();
+                
+            }
+        });
+
+
+        db.collection('users', {strict:true}, function(err, collection) {
+            if (err) {
+                console.log("The 'users' collection dont exist. Creating it with dbseed");
+                dbSeed();
+                
             }
         });
     }
-});*/
+});
 
+exports.findAllUsers = function(req, res) {
+    db.collection('users', function(err, collection) {
+        collection.find().toArray(function(err, items) {
+            res.send(items);
+        });
+    });
+};
 
+exports.findSpotsByUserId = function(req, res) {
+    //var id = req.params.id;
+
+    db.collection('spots', function(err, collection) {
+
+        var userId = "51e6a1116074a10c9c000007";
+        var user = db.users.find({"_id": userId});
+        console.log("the user: ", user);
+        collection.find({'_id': {'$in' : user.userspots}}, function(err, item) {
+            res.send(item);
+        });
+    });
+};
  
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -107,10 +138,54 @@ var dbSeed = function() {
         windDirection: "SV",
         wavetype: "chop",
         picture: "sandbergen.jpg"
+    },
+    {
+        name: "Bläsinge",
+        description: "Bra vindsäker spot. Brisen vid soligt väder och sydvästliga vindar ger mycket vind.",
+        wind: "8",
+        windDirection: "SV",
+        wavetype: "chop",
+        picture: "haga.jpg"
+    },
+    {
+        name: "Böda-sand",
+        description: "Bra vindsäker spot. Brisen vid soligt väder och sydvästliga vindar ger mycket vind.",
+        wind: "8",
+        windDirection: "SV",
+        wavetype: "chop",
+        picture: "haga.jpg"
+    },
+    {
+        name: "Färjestaden",
+        description: "Bra vindsäker spot. Brisen vid soligt väder och sydvästliga vindar ger mycket vind.",
+        wind: "8",
+        windDirection: "SV",
+        wavetype: "chop",
+        picture: "haga.jpg"
+    },
+    {
+        name: "Kleva",
+        description: "Bra vindsäker spot. Brisen vid soligt väder och sydvästliga vindar ger mycket vind.",
+        wind: "8",
+        windDirection: "SV",
+        wavetype: "chop",
+        picture: "haga.jpg"
+    }];
+
+    var users = [
+    {
+        fbname: "per.mollmark",
+        email: "per.mollmark@hotmail.com",
+        username: "surfper",
+        userspots: [ObjectId("51e101df2914931e7f000003"), ObjectId("51e101df2914931e7f000005"), ObjectId("51cd42ba9007d30000000001")]
     }];
  
     db.collection('spots', function(err, collection) {
         collection.insert(spots, {safe:true}, function(err, result) {});
+    });
+
+    db.collection('users', function(err, collection) {
+        collection.insert(users, {safe:true}, function(err, result) {});
     });
  
 };
