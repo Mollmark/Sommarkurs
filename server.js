@@ -8,7 +8,8 @@ app.configure(function () {
     app.use(express.bodyParser());
 });
 
-app.get('/users', spot.findSpotsByUserId); 
+app.get('/users/:id/spots', spot.findSpotsByUserId);
+app.put('/users/:userId/spot/:spotId/add', spot.addUserSpot); 
 app.get('/spots', spot.findAll);
 app.get('/spots/:id', spot.findById);
 app.post('/spots/create', spot.addSpot);

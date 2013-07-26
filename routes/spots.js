@@ -29,6 +29,9 @@ db.open(function(err, db) {
             }
         });
     }
+
+   
+     
 });
 
 exports.findAllUsers = function(req, res) {
@@ -40,18 +43,43 @@ exports.findAllUsers = function(req, res) {
 };
 
 exports.findSpotsByUserId = function(req, res) {
-    //var id = req.params.id;
+    var id = req.params.id;
 
-    db.collection('spots', function(err, collection) {
+   //var userId = "51e6a1116074a10c9c000007"; //Just for testing
 
-        var userId = "51e6a1116074a10c9c000007";
-        var user = db.users.find({"_id": userId});
-        console.log("the user: ", user);
-        collection.find({'_id': {'$in' : user.userspots}}, function(err, item) {
-            res.send(item);
+    db.collection('users', function(err, collection) {
+        collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, user) {
+
+            db.collection('spots', function(err, collection) {
+                var spotsArray = []
+                console.log("user undefined? ",user);
+                console.log("userspots ",user.userspots);
+
+                var spotIds = user.userspots
+                console.log("spotIds", spotIds);
+
+                for (var i = 0; i < spotIds.length; i++) {
+                    spotIds[i]
+                
+                    collection.findOne({'_id':new BSON.ObjectID(spotIds[i])}, function(err, item) {
+                    
+                    spotsArray.push(item);
+                    console.log("spotsArray i loop", spotsArray)
+
+                    if(spotIds.length === spotsArray.length){
+
+                        res.send(spotsArray);
+
+                    }
+                 
+                    });
+                };
+                
+            });
         });
     });
 };
+
  
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -102,6 +130,21 @@ exports.updateSpot = function(req, res) {
             }
         });
     });
+}
+
+exports.addUserSpot = function(req, res) {
+    var user = req.params.userId; //51e6a1116074a10c9c000007
+    var spot = req.params.spotId; //51e6a1116074a10c9c000006
+    console.log('Updating userspots for user: ' + user);
+    console.log("spot: ", spot);
+
+    db.collection('users', function(err, collection) {
+
+        collection.update({'_id':new BSON.ObjectID(user)}, {$pushAll: { userspots: spot}}); 
+    
+    });
+
+
 }
  
 exports.deleteSpot = function(req, res) {

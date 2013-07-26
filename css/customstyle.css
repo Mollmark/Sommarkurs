@@ -51,6 +51,14 @@ h1{
 
 	width:110px;
 
+}
+
+.surfHereButton{
+
+	width:110px;
+	margin-bottom: -33px;
+	float:right;
+
 
 }
 
@@ -62,9 +70,39 @@ h1{
 
 #profileImg{
 
-	width:50px;
-	height: 50px;
-	margin-bottom: -45px;
-	margin-left: 50px;
+
 
 }
+
+.feedImg{
+
+	width:100%;
+	height:100%;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	z-index: 10;
+
+}
+
+h1.feed{
+	color:black;
+	margin-bottom: 0px;
+	
+}
+
+.feedLink{
+	text-decoration: none;
+	
+}
+
+.feedSpotInfo{
+
+	background-color: #C2FFFF;
+	width:97,5%;
+	height:40px;
+	margin-top: -5px;
+	margin-bottom: 10px;
+	padding:5px 5px 5px 5px;
+
+}
+

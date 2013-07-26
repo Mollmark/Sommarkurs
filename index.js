@@ -1,6 +1,7 @@
 var surfSpoter = {
 
 
+
     //Constructor
     initialize: function() {
 
@@ -8,6 +9,8 @@ var surfSpoter = {
         this.rootElement = $("#appContent");
         this.searchContent = $("#searchContent");
         this.spotDetailsContent = $("#spotDetailsContent");
+        this.userSpotsFeed = $("#userSpotsFeed");
+
         this.bindEvents();
     },
 
@@ -20,6 +23,7 @@ var surfSpoter = {
 
     onDeviceReady: function() {
  
+ 
         surfSpoter.Router = new surfSpoter.Router();
         Backbone.history.start();
 
@@ -29,10 +33,12 @@ var surfSpoter = {
 
 //The applications available routes
 surfSpoter.Router = Backbone.Router.extend({
+	
+	//loggedIn: false,
 
     routes: {
-        "":             "home",
-        "spots#:id": 	"spotDetails", 
+        "users/:id/spots":     "home",
+        "spots/:id": 	"spotDetails", 
         "search": 		"searchSpot",
         "settings": 	"settings",
         "info": 		"info",
@@ -41,9 +47,60 @@ surfSpoter.Router = Backbone.Router.extend({
      
     },
 
-    home: function(){
+  /*  check: function(){ 	
 
-        this.changePage(new surfSpoter.HomeView());
+    	FB.getLoginStatus(function(response) {
+			if (response.status === 'connected') {
+				console.log("INLOGGAD");
+				surfSpoter.Router.loggedIn = true;
+				console.log("true? ",surfSpoter.Router.loggedIn);
+				
+			} else{
+				console.log("UTLOGGAD");
+				surfSpoter.Router.loggedIn = false;
+				console.log("true? ",surfSpoter.Router.loggedIn);
+				
+			}
+		});
+	},*/
+
+    home: function(id){
+
+    
+ 
+	console.log("true i router? ",surfSpoter.Router.loggedIn);
+
+ 
+
+
+
+	    	var that = this;
+
+	    	var feedDiv = surfSpoter.userSpotsFeed;
+	    	feedDiv.empty();
+
+	    	console.log("u want user feed");
+
+	    	var spots = new surfSpoter.userSpotsModel({id: id});
+
+	    	spots.fetch({
+
+	            successCallback: function(data) {
+
+	            	console.log("DATATATTA", data);
+
+	                that.changePage(new surfSpoter.HomeView({
+
+	                    model: data
+	                }));
+	            }    
+
+	            
+
+	        });
+
+    	
+
     },
 
     info: function(){
@@ -53,7 +110,9 @@ surfSpoter.Router = Backbone.Router.extend({
 
     settings: function(){
 
+
     	this.changePage(new surfSpoter.SettingsView());
+
     },
 
     logIn: function(){

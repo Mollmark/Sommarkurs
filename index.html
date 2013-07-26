@@ -19,19 +19,30 @@
 
 		    <div data-role="header" data-theme="f">
 		    	<a href="#" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f"></a>
-		    	<div id="profileImg"></div>
 		    	<h1 class="logo">Surfspoter</h1>
 		    	<a href="#settings">Settings</a>
 		    </div>
 	        <div data-role="content" id="homeContent">           
 	        	<p>Your spots:</p>
-	        	<p>Available soon!!!!!</p>
+	        	
+				<% _.each(this.model, function(spot) { %>
+					
+						<a class="feedLink" href="#spots#<%=spot._id%>">
+						<h1 class="feed"><%= spot.name %></h1>
+						<a class="surfHereButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Surfa här</a>
+						<img class="feedImg" src="pics/<%= spot.picture %>">
+						
+						</a>
+						<div class="feedSpotInfo"><p>Vind just nu: <%= spot.wind %></p></div>
+					
 
-	        	<div id="appContent">
-				<!-- TEMPLATES CONTENTS GOES HERE -->
-				</div>
+				<% }); %>
+					
+			</div>
+
+	        	
 					 		 		
-	        </div>
+	     
 	 
 	        <div data-role="footer" data-theme="f" data-position="fixed">
 	            <nav data-role="navbar">
@@ -199,7 +210,7 @@
 		<% _.each(this.model, function(spot) { %>
 
 			<li>
-				<a href="#spots#<%=spot._id%>">
+				<a href="#spots/<%=spot._id%>">
 				<h1><%= spot.name %></h1>
 				<img src="pics/<%= spot.picture %>">
 				<p><%= spot.description %></p>
