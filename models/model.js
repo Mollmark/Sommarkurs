@@ -23,6 +23,8 @@ surfSpoter.spotsModel = Backbone.Model.extend({
 //Spots with user id
 surfSpoter.userSpotsModel = Backbone.Model.extend({
 
+
+
     initialize:function () {
         this.spots = new surfSpoter.userSpotsCollection();
         this.spots.parent = this;
@@ -34,6 +36,7 @@ surfSpoter.userSpotsModel = Backbone.Model.extend({
                 surfSpoter.applicationData.getSpotsByUserId(this.id, function (data) {
 
                 options.successCallback(data);
+
             });
         }
     }

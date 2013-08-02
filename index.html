@@ -19,21 +19,25 @@
 
 		    <div data-role="header" data-theme="f">
 		    	<a href="#" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f"></a>
-		    	<h1 class="logo">Surfspoter</h1>
+		    	<h1>Dina spots</h1>
 		    	<a href="#settings">Settings</a>
 		    </div>
 	        <div data-role="content" id="homeContent">           
-	        	<p>Your spots:</p>
 	        	
-				<% _.each(this.model, function(spot) { %>
+	        	
+				<% _.each(this.model, function(spot) { 
+
+					console.log("USERN");
+					var url = "test";%>
+					<a class="feedLink" href="/#spot/<%=spot._id%>">
+				
 					
-						<a class="feedLink" href="#spots#<%=spot._id%>">
-						<h1 class="feed"><%= spot.name %></h1>
-						<a class="surfHereButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Surfa här</a>
-						<img class="feedImg" src="pics/<%= spot.picture %>">
-						
-						</a>
-						<div class="feedSpotInfo"><p>Vind just nu: <%= spot.wind %></p></div>
+					<h1 class="feed"><%= spot.name %></h1>
+					<a class="surfHereButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Surfa här</a>
+					<img class="feedImg" src="pics/<%= spot.picture %>">
+					
+					</a>
+					<div class="feedSpotInfo"><p>Vind just nu: <%= spot.wind %></p></div>
 					
 
 				<% }); %>
@@ -210,7 +214,7 @@
 		<% _.each(this.model, function(spot) { %>
 
 			<li>
-				<a href="#spots/<%=spot._id%>">
+				<a href="#spot/<%=spot._id%>">
 				<h1><%= spot.name %></h1>
 				<img src="pics/<%= spot.picture %>">
 				<p><%= spot.description %></p>
@@ -247,7 +251,24 @@
 
 	    <div data-role="content">
 			
-			<h1 class="spotName"><%= this.model.name %></h1><a class="followButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Follow spot</a>
+			<h1 class="spotName"><%= this.model.name %></h1>
+			<% var url = document.URL;
+    		console.log("URLEN", url);
+    		var userId = url.split("/");
+    		console.log("SPLITTAD", userId[4]);%>
+
+			<form id="followSpotForm" method="put">
+			    <input type="hidden" id="spot" value="<%= this.model._id %>">
+			    <input type="hidden" id="user" value="<% userId %>"
+			    <input class="followButton" id="submit" type="submit">
+			</form>
+
+			<% $("#followSpotForm").submit(function() {
+			    var spot = $("#user").attr("value");
+			    var user = $("#spot").attr("value");
+			    $("#form").attr("action", "/users/"+value1+"/spot"+value2+"/add");
+			    alert($("#followSpotForm").attr("http://127.0.0.1:3000/users/"+user+"/spot/"+spot+"/add"));
+			});%>
 			<p class="wind"><strong>Vind: </strong><%= this.model.wind%> m/s</p>
 			<p class="wave"><strong>Vågtyp: </strong><%= this.model.wavetype%></p>
 			<img class="spotDetailsImage" src="pics/<%= this.model.picture %>">

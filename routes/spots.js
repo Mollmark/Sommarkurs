@@ -10,6 +10,8 @@ db = new Db('spotdb', server);
  
 db.open(function(err, db) {
 
+   
+
     if(!err) {
         console.log("failed to connect to 'spotdb' database");
         db.collection('spots', {strict:true}, function(err, collection) {
@@ -43,12 +45,18 @@ exports.findAllUsers = function(req, res) {
 };
 
 exports.findSpotsByUserId = function(req, res) {
-    var id = req.params.id;
-
-   //var userId = "51e6a1116074a10c9c000007"; //Just for testing
+    var id = req.params.id;   
 
     db.collection('users', function(err, collection) {
         collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, user) {
+
+            if (err) {
+                res.send({'error':'Couldnt find user'});
+            } else {
+                req.session.userId = id;
+                console.log("SESSION",req.session.userId);               
+            }
+            
 
             db.collection('spots', function(err, collection) {
                 var spotsArray = []
@@ -84,6 +92,7 @@ exports.findSpotsByUserId = function(req, res) {
 exports.findById = function(req, res) {
     var id = req.params.id;
     console.log('Get spot: ' + id);
+    console.log("SESSION!",req.session.userId);
     db.collection('spots', function(err, collection) {
         collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
             res.send(item);
@@ -92,7 +101,16 @@ exports.findById = function(req, res) {
 };
  
 exports.findAll = function(req, res) {
+    console.log("SESSION!",req.session.userId);
     db.collection('spots', function(err, collection) {
+        collection.find().toArray(function(err, items) {
+            res.send(items);
+        });
+    });
+};
+
+exports.findAllUsers = function(req, res) {
+    db.collection('users', function(err, collection) {
         collection.find().toArray(function(err, items) {
             res.send(items);
         });
@@ -133,18 +151,37 @@ exports.updateSpot = function(req, res) {
 }
 
 exports.addUserSpot = function(req, res) {
-    var user = req.params.userId; //51e6a1116074a10c9c000007
+
+    var user = req.params.userId;
     var spot = req.params.spotId; //51e6a1116074a10c9c000006
+    //console.log("SESSION!!!!!!!!!!!!!!!!!!!!!!!!",req.session.userId);
+
     console.log('Updating userspots for user: ' + user);
     console.log("spot: ", spot);
 
     db.collection('users', function(err, collection) {
 
-        collection.update({'_id':new BSON.ObjectID(user)}, {$pushAll: { userspots: spot}}); 
+        collection.update({'_id':new BSON.ObjectID(user)}, {$addToSet: { userspots: spot}}, function(err, result){
+            res.json(200, result);
+        });
     
     });
+}
+
+exports.deleteUserSpot = function(req, res) {
+    var user = req.params.userId; //51e6a1116074a10c9c000007
+    var spot = req.params.spotId; //51e6a1116074a10c9c000006
+    console.log('Deleting userspots for user: ' + user);
+    console.log("spot deleting: ", spot);
+
+    db.collection('users', function(err, collection) {
 
 
+        collection.update({'_id':new BSON.ObjectID(user)}, {$pull: { userspots: spot}}, function(err, result){
+            res.json(200, result);
+        });
+
+    });
 }
  
 exports.deleteSpot = function(req, res) {
@@ -156,6 +193,21 @@ exports.deleteSpot = function(req, res) {
                 res.send({'error':'An error has occurred - ' + err});
             } else {
                 console.log('' + result + ' document(s) deleted');
+                res.send(req.body);
+            }
+        });
+    });
+}
+
+exports.deleteUser = function(req, res) {
+    var id = req.params.userId;
+    console.log('Deleting user: ' + id);
+    db.collection('users', function(err, collection) {
+        collection.remove({'_id':new BSON.ObjectID(id)}, {safe:true}, function(err, result) {
+            if (err) {
+                res.send({'error':'An error has occurred - ' + err});
+            } else {
+                console.log('' + result + ' user deleted');
                 res.send(req.body);
             }
         });
@@ -220,7 +272,7 @@ var dbSeed = function() {
         fbname: "per.mollmark",
         email: "per.mollmark@hotmail.com",
         username: "surfper",
-        userspots: [ObjectId("51e101df2914931e7f000003"), ObjectId("51e101df2914931e7f000005"), ObjectId("51cd42ba9007d30000000001")]
+        userspots: ["51e101df2914931e7f000003", "51e101df2914931e7f000005", "51cd42ba9007d30000000001"]
     }];
  
     db.collection('spots', function(err, collection) {

@@ -6,10 +6,16 @@ var app = express();
 app.configure(function () {
     app.use(express.logger('dev'));    
     app.use(express.bodyParser());
+    app.use(express.cookieParser());
+	app.use(express.session({secret: '1234'}));
+	app.use(app.router);
 });
 
 app.get('/users/:id/spots', spot.findSpotsByUserId);
+app.get('/users', spot.findAllUsers);
+app.delete('/users/:userId/delete', spot.deleteUser);
 app.put('/users/:userId/spot/:spotId/add', spot.addUserSpot); 
+app.put('/users/:userId/spot/:spotId/delete', spot.deleteUserSpot); 
 app.get('/spots', spot.findAll);
 app.get('/spots/:id', spot.findById);
 app.post('/spots/create', spot.addSpot);

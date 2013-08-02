@@ -37,8 +37,8 @@ surfSpoter.Router = Backbone.Router.extend({
 	//loggedIn: false,
 
     routes: {
-        "users/:id/spots":     "home",
-        "spots/:id": 	"spotDetails", 
+        "users/:userId":     "home",
+        "spot/:spotId": 	"spotDetails", 
         "search": 		"searchSpot",
         "settings": 	"settings",
         "info": 		"info",
@@ -64,43 +64,36 @@ surfSpoter.Router = Backbone.Router.extend({
 		});
 	},*/
 
-    home: function(id){
-
-    
+    home: function(userId){ 
  
 	console.log("true i router? ",surfSpoter.Router.loggedIn);
-
- 
-
-
 
 	    	var that = this;
 
 	    	var feedDiv = surfSpoter.userSpotsFeed;
 	    	feedDiv.empty();
-
 	    	console.log("u want user feed");
 
-	    	var spots = new surfSpoter.userSpotsModel({id: id});
-
+	    	var spots = new surfSpoter.userSpotsModel({id: userId});
+	    	console.log("spots id", spots.id);
 	    	spots.fetch({
 
-	            successCallback: function(data) {
-
-	            	console.log("DATATATTA", data);
+	            successCallback: function(data) {	            	
 
 	                that.changePage(new surfSpoter.HomeView({
 
 	                    model: data
-	                }));
-	            }    
 
-	            
+	                }));
+
+	               
+	               console.log("DATATATTA", data);
+	            }    	            
 
 	        });
+	        //spots.set("USERNNN", spots.id);
 
-    	
-
+	        console.log("Spots", spots)  	
     },
 
     info: function(){
@@ -150,32 +143,31 @@ surfSpoter.Router = Backbone.Router.extend({
     },
 
     //Details on a certain spot with id
-    spotDetails: function(id) {
+    spotDetails: function(spotId) {
+    	var url = document.URL;
+    	console.log("URLEN", url);
+    	var splitted = url.split("/");
+    	console.log("SPLITTAD", splitted[4]);
 
     	var that = this;
-
     	var spotDetailsContentDiv = surfSpoter.spotDetailsContent;
     	spotDetailsContentDiv.empty();
 
     	console.log("u want details");
-
-    	var spot = new surfSpoter.spotModel({id: id});
+    	var spot = new surfSpoter.spotModel({id: spotId});
 
     	spot.fetch({
 
             successCallback: function(data) {
 
+            	console.log("SPOTEN", data);
+
                 that.changePage(new surfSpoter.SpotDetailsView({
 
                     model: data
                 }));
-            }    
-
-            
-
+            }              
         });
-
-
     },
 
     goSurf: function(){
