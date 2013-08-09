@@ -11,11 +11,12 @@ app.configure(function () {
 	app.use(app.router);
 });
 
-app.get('/users/:id/spots', spot.findSpotsByUserId);
+app.get('/user/:id/spots', spot.findSpotsByUserId);
 app.get('/users', spot.findAllUsers);
-app.delete('/users/:userId/delete', spot.deleteUser);
-app.put('/users/:userId/spot/:spotId/add', spot.addUserSpot); 
-app.put('/users/:userId/spot/:spotId/delete', spot.deleteUserSpot); 
+app.delete('/user/:userId/delete', spot.deleteUser);
+app.post('/user/:userId/spot/:spotId/add', spot.addUserSpot); 
+app.post('/user/:userId/spot/:spotId/addSurferOnSpot', spot.addsurferOnSpot); 
+app.put('/user/:userId/spot/:spotId/delete', spot.deleteUserSpot); 
 app.get('/spots', spot.findAll);
 app.get('/spots/:id', spot.findById);
 app.post('/spots/create', spot.addSpot);

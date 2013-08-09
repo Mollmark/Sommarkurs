@@ -1,7 +1,5 @@
 var surfSpoter = {
 
-
-
     //Constructor
     initialize: function() {
 
@@ -34,12 +32,16 @@ var surfSpoter = {
 //The applications available routes
 surfSpoter.Router = Backbone.Router.extend({
 	
-	//loggedIn: false,
+    //The id of the current user
+	userIdConstant: 0,
+    
+    //This array contains users userspots, so we can check in template if user are able to follow or not
+    array: [],
 
     routes: {
-        "users/:userId":     "home",
-        "spot/:spotId": 	"spotDetails", 
-        "search": 		"searchSpot",
+        "user/:userId":     "home",
+        "user/:userId/spot/:spotId": 	"spotDetails", 
+        "user/:userId/searchSpot": 		"searchSpot",
         "settings": 	"settings",
         "info": 		"info",
         "goSurf": 		"goSurf",
@@ -65,8 +67,17 @@ surfSpoter.Router = Backbone.Router.extend({
 	},*/
 
     home: function(userId){ 
+
+        if(surfSpoter.Router.array.length > 1){
+
+            surfSpoter.Router.array.splice(0,1);
+            console.log("spliced", surfSpoter.Router.array);
+        };
+
+        var user = this.setUserId(userId);
+        console.log("ID I HOME???", user);
  
-	console.log("true i router? ",surfSpoter.Router.loggedIn);
+	    console.log("true i router? ",surfSpoter.Router.loggedIn);
 
 	    	var that = this;
 
@@ -74,26 +85,33 @@ surfSpoter.Router = Backbone.Router.extend({
 	    	feedDiv.empty();
 	    	console.log("u want user feed");
 
-	    	var spots = new surfSpoter.userSpotsModel({id: userId});
-	    	console.log("spots id", spots.id);
+	    	var spots = new surfSpoter.userSpotsModel({id: user});
+	    	console.log("user id", spots.id);
+ 
 	    	spots.fetch({
 
-	            successCallback: function(data) {	            	
+	            successCallback: function(data) {            	
 
 	                that.changePage(new surfSpoter.HomeView({
 
-	                    model: data
-
+	                    model: data, usern: user
+	                    
 	                }));
-
 	               
 	               console.log("DATATATTA", data);
 	            }    	            
 
 	        });
-	        //spots.set("USERNNN", spots.id);
 
-	        console.log("Spots", spots)  	
+	        console.log("Spotsssssssssssss", spots); 	
+    },
+
+    setUserId: function(userId){
+        var constantId = surfSpoter.Router.userIdConstant;
+        constantId = userId
+        console.log("SETUSER ID", constantId);
+        return constantId;
+
     },
 
     info: function(){
@@ -114,7 +132,15 @@ surfSpoter.Router = Backbone.Router.extend({
     },
 
     //Listing all spots
-    searchSpot: function(){
+    searchSpot: function(userId){
+
+        console.log("CONSTANT ARRAYEN SERACH", surfSpoter.Router.array);
+
+        if(surfSpoter.Router.array.length > 1){
+
+            surfSpoter.Router.array.splice(1,1);
+            console.log("spliced i search", surfSpoter.Router.array);
+        };
 
     	var that = this;
 
@@ -131,7 +157,7 @@ surfSpoter.Router = Backbone.Router.extend({
 
                 that.changePage(new surfSpoter.searchSpot({
 
-                    model: data
+                    model: data, usern:userId
                 }));          
 
                 //Fix for some DOM-rendering problem with jQuery Mobile styles
@@ -143,31 +169,51 @@ surfSpoter.Router = Backbone.Router.extend({
     },
 
     //Details on a certain spot with id
-    spotDetails: function(spotId) {
-    	var url = document.URL;
-    	console.log("URLEN", url);
-    	var splitted = url.split("/");
-    	console.log("SPLITTAD", splitted[4]);
+    spotDetails: function(userId, spotId) {
 
+        if(surfSpoter.Router.array.length > 1){
+
+            surfSpoter.Router.array.splice(0,1);
+            console.log("splicedi details", surfSpoter.Router.array);
+        };
+        var theConstant = this.setUserId(userId);
+        console.log("CONSTANT ARRAYEN", surfSpoter.Router.array);
+        console.log("CONSTANT in details", theConstant);
+        
     	var that = this;
     	var spotDetailsContentDiv = surfSpoter.spotDetailsContent;
     	spotDetailsContentDiv.empty();
 
     	console.log("u want details");
-    	var spot = new surfSpoter.spotModel({id: spotId});
+    	
+        var userSpots = new surfSpoter.userSpotsModel({id: theConstant});
+        var spot = new surfSpoter.spotModel({id: spotId});
+ 
+     
 
-    	spot.fetch({
+        $.when(
+            userSpots.fetch({
 
-            successCallback: function(data) {
+                successCallback: function(data) {
+                    console.log("datan i succes userspots.fetch", data);
 
-            	console.log("SPOTEN", data);
+                    surfSpoter.Router.array.push(data);
+                    console.log("pushed", surfSpoter.Router.array);
+                }
+            })).then(function(){
 
-                that.changePage(new surfSpoter.SpotDetailsView({
+            spot.fetch({
+                successCallback: function(data) {               
+                    console.log("datan i succes spot.fetch", data);
+                    console.log("ARRAYEN I DETAILS FETCH",surfSpoter.Router.array);
+                    that.changePage(new surfSpoter.SpotDetailsView({
 
-                    model: data
-                }));
-            }              
+                        model: data, followedSpots: surfSpoter.Router.array, usern: theConstant
+                    }));               
+                }             
+            });
         });
+    
     },
 
     goSurf: function(){

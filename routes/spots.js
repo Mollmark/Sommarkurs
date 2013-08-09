@@ -9,11 +9,11 @@ var server = new Server('localhost', 27017, {auto_reconnect: true});
 db = new Db('spotdb', server);
  
 db.open(function(err, db) {
-
    
 
     if(!err) {
-        console.log("failed to connect to 'spotdb' database");
+        
+        console.log("Connected to 'spotdb' database");
         db.collection('spots', {strict:true}, function(err, collection) {
             if (err) {
                 console.log("The 'spots' collection dont exist. Creating it with dbseed");
@@ -160,7 +160,7 @@ exports.addUserSpot = function(req, res) {
     console.log("spot: ", spot);
 
     db.collection('users', function(err, collection) {
-
+        console.log("update or insert?");
         collection.update({'_id':new BSON.ObjectID(user)}, {$addToSet: { userspots: spot}}, function(err, result){
             res.json(200, result);
         });
@@ -183,7 +183,33 @@ exports.deleteUserSpot = function(req, res) {
 
     });
 }
- 
+
+
+exports.addsurferOnSpot = function(req, res){
+
+    var userId = req.params.userId;
+    var spot = req.params.spotId;
+    console.log('Updating suerfers on spot for user: ' + userId);
+    console.log("Adds surfer to spot: ", spot);
+
+
+    db.collection('users', function(err, collection) {
+        collection.findOne({'_id':new BSON.ObjectID(userId)}, function(err, user) {
+
+            if (err) {
+                res.send({'error':'Couldnt find user'});
+            } 
+
+            db.collection('spots', function(err, collection) {
+                collection.update({'_id':new BSON.ObjectID(spot)}, {$addToSet: { surfersonspot: user.username}}, function(err, result){
+                    res.json(200, result);
+                });
+        
+            });
+        });
+    });
+}
+
 exports.deleteSpot = function(req, res) {
     var id = req.params.id;
     console.log('Deleting spot: ' + id);
@@ -215,7 +241,7 @@ exports.deleteUser = function(req, res) {
 }
  
 
-var dbSeed = function() {
+var dbSpotsSeed = function() {
  
     var spots = [
     {
@@ -224,7 +250,8 @@ var dbSeed = function() {
         wind: "8",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "haga.jpg"
+        picture: "haga.jpg",
+        surfersonspot: ["surfper"]
     },
     {
         name: "Sandbergen",
@@ -232,7 +259,9 @@ var dbSeed = function() {
         wind: "7",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "sandbergen.jpg"
+        picture: "sandbergen.jpg",
+        surfersonspot: ["surfper"]
+
     },
     {
         name: "Bläsinge",
@@ -240,7 +269,8 @@ var dbSeed = function() {
         wind: "8",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "haga.jpg"
+        picture: "haga.jpg",
+        surfersonspot: ["surfper"]
     },
     {
         name: "Böda-sand",
@@ -248,7 +278,8 @@ var dbSeed = function() {
         wind: "8",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "haga.jpg"
+        picture: "haga.jpg",
+        surfersonspot: []
     },
     {
         name: "Färjestaden",
@@ -256,7 +287,8 @@ var dbSeed = function() {
         wind: "8",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "haga.jpg"
+        picture: "haga.jpg",
+        surfersonspot: []
     },
     {
         name: "Kleva",
@@ -264,23 +296,50 @@ var dbSeed = function() {
         wind: "8",
         windDirection: "SV",
         wavetype: "chop",
-        picture: "haga.jpg"
+        picture: "haga.jpg",
+        surfersonspot: []
     }];
 
+ 
+    db.collection('spots', function(err, collection) {
+        collection.insert(spots, {safe:true}, function(err, result) {});
+    });
+ 
+};
+
+var dbUsersSeed = function() {
+ 
     var users = [
     {
         fbname: "per.mollmark",
         email: "per.mollmark@hotmail.com",
         username: "surfper",
-        userspots: ["51e101df2914931e7f000003", "51e101df2914931e7f000005", "51cd42ba9007d30000000001"]
+        userspots: ["5204df268e0d2882b4000001", "5204df268e0d2882b4000002", "5204df268e0d2882b4000003"]
     }];
- 
-    db.collection('spots', function(err, collection) {
-        collection.insert(spots, {safe:true}, function(err, result) {});
-    });
+
+    var surfSessions = [
+    {
+        username: "surfper",
+        surfspotid: "5204df268e0d2882b4000001"
+    },
+    {
+        username: "surfper",
+        surfspotid: "5204df268e0d2882b4000002"
+
+    },
+    {
+        username: "surfper",
+        surfspotid: "5204df268e0d2882b4000003"
+
+    }];
+    
 
     db.collection('users', function(err, collection) {
         collection.insert(users, {safe:true}, function(err, result) {});
+    });
+
+    db.collection('surfSessions', function(err, collection) {
+        collection.insert(surfSessions, {safe:true}, function(err, result) {});
     });
  
 };

@@ -15,49 +15,92 @@
 
 	<!--HOME-->
 	<script type="text/template" id="home">
-		<div data-role="panel" id="panel" data-position="right" data-theme="f" data-display="push"></div>
-
-		    <div data-role="header" data-theme="f">
-		    	<a href="#" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="f"></a>
+		<div data-role="panel" id="panel" data-position="right" data-theme="a" data-display="push"></div>
+		    <div data-role="header" data-theme="a">		    	
 		    	<h1>Dina spots</h1>
 		    	<a href="#settings">Settings</a>
 		    </div>
-	        <div data-role="content" id="homeContent">           
-	        	
-	        	
-				<% _.each(this.model, function(spot) { 
-
-					console.log("USERN");
-					var url = "test";%>
-					<a class="feedLink" href="/#spot/<%=spot._id%>">
+	        <div data-role="content">          	        		        	
 				
-					
-					<h1 class="feed"><%= spot.name %></h1>
-					<a class="surfHereButton" href="#" data-theme="g" data-role="button" data-icon="plus" data-mini="true">Surfa här</a>
-					<img class="feedImg" src="pics/<%= spot.picture %>">
-					
-					</a>
-					<div class="feedSpotInfo"><p>Vind just nu: <%= spot.wind %></p></div>
-					
+				
+				<%  //Loopar ut infon för varje spot
+					for (var i = 0; i <this.model.length; i++) {
+						user = this.options.usern;
+						name = this.model[i]["name"];
+						picture = this.model[i]["picture"];
+						spotId = this.model[i]["_id"];
+						wind = this.model[i]["wind"];
+						surfers = this.model[i].surfersonspot;
 
-				<% }); %>
-					
+						%><a class="feedLink" href="#user/<%=user%>/spot/<%= spotId %>">
+						<h1 class="feed"><%= name %></h1>
+						</a>
+						<form id="surfOnSpotForm" method="post">
+						    <input type="hidden" id="surfOnSpotSpot" value="<%= spotId %>">
+						    <input type="hidden" id="surfOnSpotUser" value="<%= user %>">				    
+							<input type="submit" id="surfHereButton" data-theme="g" value="Surfa här!" data-mini="true" data-icon="plus" data-iconpos="right">
+						</form>
+						<img class="feedImg" src="pics/<%= picture %>">
+						
+						<div class="feedWindInfo">
+							<p class="smallDataDesc">Vind just nu: <%= wind %></p>
+						</div>
+						<div class="surfersOnSpot"><p class="smallDataDesc">På plats:</p> 
+						<%
+						//Loopar ut surfersonspotarrayen om den innehåller surfare
+						if(surfers.length >0){
+							console.log("här finns surfare", surfers.length);
+							for (var y = 0; y <surfers.length; y++) {
+							%><p class="onSpot"><%= surfers[y]%></p><%
+							}
+						}
+											
+					};%>
+					<%//Posta att surfaren surfar på spot 
+					%>
+					<% jQuery(document).on('submit', '#surfOnSpotForm', function() {
+						event.preventDefault();
+						console.log("Want to surf on spot");
+
+					    var spot = jQuery("#surfOnSpotSpot").attr("value");
+					    var user = jQuery("#surfOnSpotUser").attr("value");
+
+					    $.ajaxSetup({
+
+							url: "http://127.0.0.1:3000/user/"+user+"/spot/"+spot+"/addSurferOnSpot",
+							type: "POST",
+							data: {userId: user, spotId: spot},
+							headers: {Accept: "application/json"}
+
+						});
+
+						$.ajax({
+
+							success: function(data){
+
+								console.log("Surf spot", data);
+								
+							},
+							error: function(data, error){
+								console.log("Error when trying to surf on spot?", data, error);
+								
+							}
+						});
+					});%>	
+				
+					</div>											
 			</div>
-
-	        	
-					 		 		
-	     
 	 
-	        <div data-role="footer" data-theme="f" data-position="fixed">
+	        <div class="homeFooter" data-role="footer" data-theme="a" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
-	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 					    <li><a href="#info" data-icon="info">Info</a></li>
-					</ul>
+		 			</ul>
 				</nav>
 	        </div>
-	    </div> 
+	    </div>
     </script>
 
     <!--LOG IN-->
@@ -89,7 +132,7 @@
 	        <div data-role="footer" data-theme="f" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
-	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 					    <li><a href="#info" data-icon="info">Info</a></li>
 					</ul>
@@ -123,7 +166,7 @@
 	        <div data-role="footer" data-theme="f" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
-	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 					    <li><a href="#info" data-icon="info">Info</a></li>
 					</ul>
@@ -155,7 +198,7 @@
 	        <div data-role="footer" data-theme="f" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
-	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 					    <li><a href="#info" data-icon="info">Info</a></li>
 					</ul>
@@ -190,7 +233,7 @@
 	        <div data-role="footer" data-theme="f" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
-	            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 					    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 					    <li><a href="#info" data-icon="info">Info</a></li>
 					</ul>
@@ -203,9 +246,10 @@
 	<!--SEARCH SURFSPOT-->
 	<script type="text/template" id="search">
 
-		<div data-role="header" data-theme="f">
-	            <a href="http://127.0.0.1:8888" data-icon="back" class="back ui-btn-left">Back</a>
-	            <h1 class="logo">Surfspoter</h1>
+		<div data-role="header" data-theme="a">
+			<%user = this.options.usern;%>
+            <a href="#user/<%=user%>" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="a"></a>
+            <h1 class="logo">Surfspoter</h1>
 	    </div>
 
 	    <div data-role="content">
@@ -214,7 +258,7 @@
 		<% _.each(this.model, function(spot) { %>
 
 			<li>
-				<a href="#spot/<%=spot._id%>">
+				<a href="#user/<%=user%>/spot/<%= spot._id %>">
 				<h1><%= spot.name %></h1>
 				<img src="pics/<%= spot.picture %>">
 				<p><%= spot.description %></p>
@@ -224,10 +268,10 @@
 		<% }); %>
 			</ul>
 	    </div>
-	    <div data-role="footer" data-theme="f" data-position="fixed">
+	    <div data-role="footer" data-theme="a" data-position="fixed">
             <nav data-role="navbar">
             	<ul>
-            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 				    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 				    <li><a href="#info" data-icon="info">Info</a></li>
 				</ul>
@@ -237,58 +281,139 @@
     </script>
 
 
-
-
-
-
-
     <!--SPOT DETAILS-->
-    <script type="text/template" id="test">
-    	<div data-role="header" data-theme="f">
-            <a href="http://127.0.0.1:8888/#search" data-icon="back" class="back ui-btn-left">Back</a>
+    <script type="text/template" id="details">
+    	<div data-role="header" data-theme="a">
+    	<%user = this.options.usern;%>
+    	<a href="#user/<%=user%>" data-iconpos="notext" data-role="button" data-icon="home" title="Home" data-theme="a"></a>
+          
             <h1><%=this.model.name%></h1>
         </div>
 
-	    <div data-role="content">
+	    <div data-role="content">			
+						
+			<% var userSpotsArray = this.options.followedSpots;
+			console.log("USERSPOTSARRAY, undefeined?", userSpotsArray);
+			var cleanUserSpotsArray =[];
+
 			
-			<h1 class="spotName"><%= this.model.name %></h1>
-			<% var url = document.URL;
-    		console.log("URLEN", url);
-    		var userId = url.split("/");
-    		console.log("SPLITTAD", userId[4]);%>
+			for (var i = 0; i < userSpotsArray[0].length; i++) {
+			cleanUserSpotsArray.push(userSpotsArray[0][i]["_id"]);
+			
+			};
+			
+			user = this.options.usern;
+			name = this.model.name;
+			picture = this.model.picture;
+			spotID = this.model._id;
+			wind = this.model.wind;
+			wavetype = this.model.wavetype;
+			description = this.model.description;%>
 
-			<form id="followSpotForm" method="put">
-			    <input type="hidden" id="spot" value="<%= this.model._id %>">
-			    <input type="hidden" id="user" value="<% userId %>"
-			    <input class="followButton" id="submit" type="submit">
-			</form>
+			<%console.log("CLEAN", cleanUserSpotsArray);%>
+			<h1 class="spotName"><%= name %></h1>
+			
 
-			<% $("#followSpotForm").submit(function() {
-			    var spot = $("#user").attr("value");
-			    var user = $("#spot").attr("value");
-			    $("#form").attr("action", "/users/"+value1+"/spot"+value2+"/add");
-			    alert($("#followSpotForm").attr("http://127.0.0.1:3000/users/"+user+"/spot/"+spot+"/add"));
+			<% jQuery(document).on('submit', '#followSpotForm', function() {
+				event.preventDefault();
+				console.log("SUBMITTED");
+
+			    var spot = jQuery("#spot").attr("value");
+			    var user = jQuery("#user").attr("value");
+
+			    $.ajaxSetup({
+
+					url: "http://127.0.0.1:3000/user/"+user+"/spot/"+spot+"/add",
+					type: "POST",
+					data: {userId: user, spotId: spot},
+					headers: {Accept: "application/json"}
+
+				});
+
+				$.ajax({
+
+					success: function(data){
+
+						console.log("Follow spot", data);
+						document.location.reload(true)
+					},
+					error: function(data, error){
+						console.log("Error when trying follow spot?", data, error);
+						document.location.reload(true)
+					}
+				});
+
+			    //jQuery("#followSpotForm").attr("action", "/#users/"+user+"/spot/"+spot);
+
 			});%>
-			<p class="wind"><strong>Vind: </strong><%= this.model.wind%> m/s</p>
-			<p class="wave"><strong>Vågtyp: </strong><%= this.model.wavetype%></p>
-			<img class="spotDetailsImage" src="pics/<%= this.model.picture %>">
-			<p><%= this.model.description %></p>
+
+			<% jQuery(document).on('submit', '#unFollowSpotForm', function() {
+				event.preventDefault();
+				console.log("DONT WNAT TO FOLLOW");
+
+			    var spot = jQuery("#unFollowSpot").attr("value");
+			    var user = jQuery("#unFollowUser").attr("value");
+
+			    $.ajaxSetup({
+
+					url: "http://127.0.0.1:3000/user/"+user+"/spot/"+spot+"/delete",
+					type: "PUT",
+					data: {userId: user, spotId: spot},
+					headers: {Accept: "application/json"}
+
+				});
+
+				$.ajax({
+
+					success: function(data){
+
+						console.log("Unfollowed spot:", data);
+						window.location.replace("http://127.0.0.1:3000/user/"+user);
+					},
+					error: function(data, error){
+						console.log("Error when trying to stop follow spot?", data, error);
+						confirm("Vill du verkligen sluta följa spoten?");
+						window.location.replace("http://127.0.0.1:8888/#user/"+user);
+					}
+				});
+
+			    //jQuery("#followSpotForm").attr("action", "/#users/"+user+"/spot/"+spot);
+
+			});%>
+						
+			<img class="spotDetailsImage" src="pics/<%= picture %>">
+			<p class="wind"><strong>Vind: </strong><%= wind %> m/s</p>
+			<p class="wave"><strong>Vågtyp: </strong><%= wavetype %></p>
+			<p><%= description %></p>
 			</a>
+			<%
+				if(jQuery.inArray(spotID,cleanUserSpotsArray) >-1){
+				%><form id="unFollowSpotForm" method="put">
+				    <input type="hidden" id="unFollowSpot" value="<%= this.model._id %>">
+				    <input type="hidden" id="unFollowUser" value="<%= user %>">
+				    <input type="submit" id="deleteButton" data-theme="d" value="Stop follow?" data-mini="true" data-inline="true" data-icon="delete" data-iconpos="right">
+				</form>	
+			<%}
+			else{
+
+				%><form id="followSpotForm" method="post">
+				    <input type="hidden" id="spot" value="<%= this.model._id %>">
+				    <input type="hidden" id="user" value="<%= user %>">
+				    <input type="submit" id="submitButton" data-theme="g" value="Follow spot">
+				</form><%
+			}%>
 		
 	    </div>
-    	<div data-role="footer" data-theme="f" data-position="fixed">
+    	<div data-role="footer" data-theme="a" data-position="fixed">
             <nav data-role="navbar">
-            	<ul>
-            		<li><a href="#search" data-icon="search">Hitta spot</a></li>
+            	<ul><%user = this.options.usern;%>
+            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>
 				    <li><a href="#goSurf"><p class="goSurf">Go surfing!</p></a></li>
 				    <li><a href="#info" data-icon="info">Info</a></li>
 				</ul>
 			</nav>
         </div>
     </script>
-
-
-
 
 
 	<!--JS-Libraries-->

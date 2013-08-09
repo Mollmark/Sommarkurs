@@ -147,7 +147,7 @@ surfSpoter.dataManager = function (successCallback, errorCallback) {
 
     this.getSpotsByUserId = function (id, callback) {
 
-    var url = "http://127.0.0.1:3000/users/"+id+"/spots";
+    var url = "http://127.0.0.1:3000/user/"+id+"/spots";
     console.log(url);
     $.ajax({
 
