@@ -99,6 +99,17 @@ exports.findById = function(req, res) {
         });
     });
 };
+
+exports.findUserById = function(req, res) {
+    var id = req.params.userId;
+    console.log('Get user: ' + id);
+
+    db.collection('users', function(err, collection) {
+        collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
+            res.send(item);
+        });
+    });
+};
  
 exports.findAll = function(req, res) {
     console.log("SESSION!",req.session.userId);
@@ -184,8 +195,32 @@ exports.deleteUserSpot = function(req, res) {
     });
 }
 
+exports.deleteSurferOnSpot = function(req, res) {
+    var userId = req.params.userId; //51e6a1116074a10c9c000007
+    var spot = req.params.spotId; //51e6a1116074a10c9c000006
+    console.log('Stop surfing for user: ' + userId);
+    console.log("spot stop surfing on: ", spot);
 
-exports.addsurferOnSpot = function(req, res){
+    db.collection('users', function(err, collection) {
+        collection.findOne({'_id':new BSON.ObjectID(userId)}, function(err, user) {
+
+            if (err) {
+                res.send({'error':'Couldnt find user'});
+            } 
+
+            db.collection('spots', function(err, collection) {
+
+
+                collection.update({'_id':new BSON.ObjectID(spot)}, {$pull: { surfersonspot: user.username}}, function(err, result){
+                    res.json(200, result);
+                });
+            });
+        });
+    });
+}
+
+
+exports.addSurferOnSpot = function(req, res){
 
     var userId = req.params.userId;
     var spot = req.params.spotId;
@@ -203,8 +238,7 @@ exports.addsurferOnSpot = function(req, res){
             db.collection('spots', function(err, collection) {
                 collection.update({'_id':new BSON.ObjectID(spot)}, {$addToSet: { surfersonspot: user.username}}, function(err, result){
                     res.json(200, result);
-                });
-        
+                });       
             });
         });
     });

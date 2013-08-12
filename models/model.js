@@ -62,6 +62,23 @@ surfSpoter.spotModel = Backbone.Model.extend({
 
 });
 
+//Get one user
+surfSpoter.userModel = Backbone.Model.extend({
+
+    sync: function(method, model, options) {
+        if (method === "read") {
+
+                surfSpoter.applicationData.getUserById(this.id,function (data) {
+
+                options.successCallback(data);
+
+            });
+        }
+    }
+
+
+});
+
 
 //---------------COLLECTIONS--------------------------
 //All Spots
@@ -126,6 +143,28 @@ surfSpoter.dataManager = function (successCallback, errorCallback) {
     this.getSpotById = function (id, callback) {
 
     var url = "http://127.0.0.1:3000/spots/"+id;
+    console.log(url);
+    $.ajax({
+
+            dataType: "json",
+            url: url,
+            type: "GET",
+
+            success: function (data) {
+
+                callback(data);
+
+            },
+            error: function(object, error) {
+                console.log(error);
+            }
+        });
+
+    };
+
+   this.getUserById = function (id, callback) {
+
+    var url = "http://127.0.0.1:3000/user/"+id;
     console.log(url);
     $.ajax({
 

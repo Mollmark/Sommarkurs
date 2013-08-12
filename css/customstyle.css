@@ -150,3 +150,10 @@ h1.feed{
 	
 }
 
+.userName{
+	font-size: 0.7em;
+	display: inline;
+	float:left;
+	margin-left: 20px;
+}
+

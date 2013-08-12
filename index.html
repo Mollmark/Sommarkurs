@@ -16,14 +16,18 @@
 	<!--HOME-->
 	<script type="text/template" id="home">
 		<div data-role="panel" id="panel" data-position="right" data-theme="a" data-display="push"></div>
-		    <div data-role="header" data-theme="a">		    	
+		    <div data-role="header" data-theme="a">
+		    <a href="#user/<%=this.options.usern%>" data-iconpos="notext" data-role="button" data-icon="refresh" title="Refresh" data-theme="a"></a>		    	
 		    	<h1>Dina spots</h1>
-		    	<a href="#settings">Settings</a>
+		    	<a class="ui-btn-right" data-role="button" href="#settings">Settings</a>
 		    </div>
 	        <div data-role="content">          	        		        	
 				
-				
-				<%  //Loopar ut infon för varje spot
+				<%  
+					//Tells wich spot the user wants to surf on
+					var spotToSurfOn = "";
+					console.log("USERS INFO I TEMPLATE?", this.options.userinfo[0].username);
+					//Loopar ut infon för varje spot
 					for (var i = 0; i <this.model.length; i++) {
 						user = this.options.usern;
 						name = this.model[i]["name"];
@@ -31,15 +35,30 @@
 						spotId = this.model[i]["_id"];
 						wind = this.model[i]["wind"];
 						surfers = this.model[i].surfersonspot;
+						console.log("IN ARRAY", name);
 
 						%><a class="feedLink" href="#user/<%=user%>/spot/<%= spotId %>">
 						<h1 class="feed"><%= name %></h1>
 						</a>
-						<form id="surfOnSpotForm" method="post">
-						    <input type="hidden" id="surfOnSpotSpot" value="<%= spotId %>">
-						    <input type="hidden" id="surfOnSpotUser" value="<%= user %>">				    
-							<input type="submit" id="surfHereButton" data-theme="g" value="Surfa här!" data-mini="true" data-icon="plus" data-iconpos="right">
-						</form>
+						<% if(jQuery.inArray(this.options.userinfo[0].username, surfers) >-1){
+							console.log("DU SURFAR HÄR");%>
+
+							<form class="stopSurfOnSpotForm" method="post">
+						    <input type="hidden" class="stopSurfOnSpotSpot" value="<%= spotId %>">
+						    <input type="hidden" class="stopSurfOnSpotUser" value="<%= user %>">				    
+							<input type="submit" class="StopSurfHereButton" id="<%= spotId %>" data-theme="f" value="Du surfar här. Surfat klart?" data-mini="true" data-icon="check" data-iconpos="right">
+							</form>							
+						<%}
+						else{
+							console.log("Du kan surfa här");%>
+							<form class="surfOnSpotForm" method="post">
+						    <input type="hidden" class="surfOnSpotSpot" value="<%= spotId %>">
+						    <input type="hidden" class="surfOnSpotUser" value="<%= user %>">				    
+							<input type="submit" class="surfHereButton" id="<%= spotId %>" data-theme="g" value="Surfa här?" data-mini="true" data-icon="plus" data-iconpos="right">
+							</form>
+														
+						<%};%>
+					
 						<img class="feedImg" src="pics/<%= picture %>">
 						
 						<div class="feedWindInfo">
@@ -54,16 +73,22 @@
 							%><p class="onSpot"><%= surfers[y]%></p><%
 							}
 						}
-											
+						%></div><%					
 					};%>
-					<%//Posta att surfaren surfar på spot 
+					<% jQuery(document).click(function(event) {
+						console.log("Want to surf on spot: ", event.target.id);
+						spotToSurfOn = event.target.id;
+						console.log("Variable set? ", spotToSurfOn);
+						});//Posta att surfaren surfar på spot 
 					%>
-					<% jQuery(document).on('submit', '#surfOnSpotForm', function() {
-						event.preventDefault();
-						console.log("Want to surf on spot");
+					<% jQuery(document).on('submit', '.surfOnSpotForm', function() {
 
-					    var spot = jQuery("#surfOnSpotSpot").attr("value");
-					    var user = jQuery("#surfOnSpotUser").attr("value");
+						event.preventDefault();
+					    var spot = spotToSurfOn;
+					    console.log("RÄTT SPOT INNAN VI SKICKAR TILL SERVER?", spot);
+					    var user = jQuery(".surfOnSpotUser").attr("value");
+
+					    console.log("VILL SURFA. Spoten är: ", spot +"usern är: "+user);
 
 					    $.ajaxSetup({
 
@@ -79,19 +104,22 @@
 							success: function(data){
 
 								console.log("Surf spot", data);
+								document.location.reload(true)
 								
 							},
 							error: function(data, error){
+
 								console.log("Error when trying to surf on spot?", data, error);
+								document.location.reload(true)
 								
 							}
 						});
 					});%>	
 				
-					</div>											
+															
 			</div>
 	 
-	        <div class="homeFooter" data-role="footer" data-theme="a" data-position="fixed">
+	        <div data-role="footer" data-theme="a" data-position="fixed">
 	            <nav data-role="navbar">
 	            	<ul>
 	            		<li><a href="#user/<%=user%>/searchSpot" data-icon="search">Hitta spot</a></li>

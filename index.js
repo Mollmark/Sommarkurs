@@ -38,6 +38,8 @@ surfSpoter.Router = Backbone.Router.extend({
     //This array contains users userspots, so we can check in template if user are able to follow or not
     array: [],
 
+    userInfo:[],
+
     routes: {
         "user/:userId":     "home",
         "user/:userId/spot/:spotId": 	"spotDetails", 
@@ -68,6 +70,8 @@ surfSpoter.Router = Backbone.Router.extend({
 
     home: function(userId){ 
 
+
+
         if(surfSpoter.Router.array.length > 1){
 
             surfSpoter.Router.array.splice(0,1);
@@ -75,35 +79,42 @@ surfSpoter.Router = Backbone.Router.extend({
         };
 
         var user = this.setUserId(userId);
-        console.log("ID I HOME???", user);
- 
-	    console.log("true i router? ",surfSpoter.Router.loggedIn);
+        var wholeUser = new surfSpoter.userModel({id: user});
 
-	    	var that = this;
+        wholeUser.fetch({
 
-	    	var feedDiv = surfSpoter.userSpotsFeed;
-	    	feedDiv.empty();
-	    	console.log("u want user feed");
+            successCallback: function(data) {                
+               
+               console.log("USER DATA", data);
+               surfSpoter.Router.userInfo.push(data);
+               console.log("USERINFO SET?", surfSpoter.Router.userInfo);
+            }                   
 
-	    	var spots = new surfSpoter.userSpotsModel({id: user});
-	    	console.log("user id", spots.id);
- 
-	    	spots.fetch({
+        });
 
-	            successCallback: function(data) {            	
+    	var that = this;
+    	var feedDiv = surfSpoter.userSpotsFeed;
+    	feedDiv.empty();
+    	var spots = new surfSpoter.userSpotsModel({id: user});
 
-	                that.changePage(new surfSpoter.HomeView({
+    	spots.fetch({
 
-	                    model: data, usern: user
-	                    
-	                }));
-	               
-	               console.log("DATATATTA", data);
-	            }    	            
+            successCallback: function(data) {  
 
-	        });
+            console.log("USERNAME SETwterwtewtrt?", this.userName);          	
 
-	        console.log("Spotsssssssssssss", spots); 	
+                that.changePage(new surfSpoter.HomeView({
+
+                    model: data, usern: user, userinfo: surfSpoter.Router.userInfo
+                    
+                }));
+               
+               console.log("DATATATTA", data);
+            }    	            
+
+        });
+
+        console.log("Spotsssssssssssss", spots); 	
     },
 
     setUserId: function(userId){
