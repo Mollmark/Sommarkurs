@@ -21,7 +21,7 @@ app.put('/user/:userId/spot/:spotId/delete', spot.deleteUserSpot);
 app.put('/user/:userId/spot/:spotId/deleteSurferOnSpot', spot.deleteSurferOnSpot);  
 app.get('/spots', spot.findAll);
 app.get('/spots/:id', spot.findById);
-app.post('/spots/create', spot.addSpot);
+app.post('/spots/add', spot.addSpot);
 app.put('/spots/:id/update', spot.updateSpot);
 app.delete('/spots/:id/delete', spot.deleteSpot);
  

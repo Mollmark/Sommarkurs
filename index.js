@@ -14,7 +14,7 @@ var surfSpoter = {
 
     bindEvents: function() {
         // For app
-        //document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener('deviceready', this.onDeviceReady, false);
         // For webbbrowser
         this.onDeviceReady();
     },
@@ -41,6 +41,7 @@ surfSpoter.Router = Backbone.Router.extend({
     userInfo:[],
 
     routes: {
+        "": "home", 
         "user/:userId":     "home",
         "user/:userId/spot/:spotId": 	"spotDetails", 
         "user/:userId/searchSpot": 		"searchSpot",
@@ -70,7 +71,7 @@ surfSpoter.Router = Backbone.Router.extend({
 
     home: function(userId){ 
 
-
+        userId = "5204dfe9139a7ff7b4000001";
 
         if(surfSpoter.Router.array.length > 1){
 
@@ -109,12 +110,12 @@ surfSpoter.Router = Backbone.Router.extend({
                     
                 }));
                
-               console.log("DATATATTA", data);
+               console.log("DATA", data);
             }    	            
 
         });
 
-        console.log("Spotsssssssssssss", spots); 	
+        console.log("Spots", spots); 	
     },
 
     setUserId: function(userId){
@@ -238,12 +239,12 @@ surfSpoter.Router = Backbone.Router.extend({
         page.render();
         $('body').append($(page.el));
         var transition = $.mobile.defaultPageTransition;
+
         // We don't want to slide the first page
         if (this.firstPage) {
             transition = 'none';
             this.firstPage = false;
         }
-
 
         $.mobile.changePage($(page.el), {changeHash:false, transition: transition});
     }

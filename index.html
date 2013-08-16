@@ -17,7 +17,7 @@
 	<script type="text/template" id="home">
 		<div data-role="panel" id="panel" data-position="right" data-theme="a" data-display="push"></div>
 		    <div data-role="header" data-theme="a">
-		    <a href="#user/<%=this.options.usern%>" data-iconpos="notext" data-role="button" data-icon="refresh" title="Refresh" data-theme="a"></a>		    	
+		    <a href="#user/<%=this.options.usern%>" data-iconpos="notext" data-icon="refresh" title="Refresh" data-theme="a"></a>		    	
 		    	<h1>Dina spots</h1>
 		    	<a class="ui-btn-right" data-role="button" href="#settings">Settings</a>
 		    </div>
@@ -27,6 +27,7 @@
 					//Tells wich spot the user wants to surf on
 					var spotToSurfOn = "";
 					console.log("USERS INFO I TEMPLATE?", this.options.userinfo[0].username);
+					
 					//Loopar ut infon för varje spot
 					for (var i = 0; i <this.model.length; i++) {
 						user = this.options.usern;
@@ -43,7 +44,7 @@
 						<% if(jQuery.inArray(this.options.userinfo[0].username, surfers) >-1){
 							console.log("DU SURFAR HÄR");%>
 
-							<form class="stopSurfOnSpotForm" method="post">
+							<form class="stopSurfOnSpotForm" method="put">
 						    <input type="hidden" class="stopSurfOnSpotSpot" value="<%= spotId %>">
 						    <input type="hidden" class="stopSurfOnSpotUser" value="<%= user %>">				    
 							<input type="submit" class="StopSurfHereButton" id="<%= spotId %>" data-theme="f" value="Du surfar här. Surfat klart?" data-mini="true" data-icon="check" data-iconpos="right">
@@ -76,12 +77,13 @@
 						%></div><%					
 					};%>
 					<% jQuery(document).click(function(event) {
-						console.log("Want to surf on spot: ", event.target.id);
+						console.log("Want to surf or stop surf on spot: ", event.target.id);
 						spotToSurfOn = event.target.id;
 						console.log("Variable set? ", spotToSurfOn);
-						});//Posta att surfaren surfar på spot 
+						});
 					%>
-					<% jQuery(document).on('submit', '.surfOnSpotForm', function() {
+					<%//Surfer wants surf on spot 
+						jQuery(document).on('submit', '.surfOnSpotForm', function() {
 
 						event.preventDefault();
 					    var spot = spotToSurfOn;
@@ -112,6 +114,38 @@
 								console.log("Error when trying to surf on spot?", data, error);
 								document.location.reload(true)
 								
+							}
+						});
+					});
+
+					//Stop surf on spot
+					jQuery(document).on('submit', '.stopSurfOnSpotForm', function() {
+						event.preventDefault();
+						console.log("DONT WANT TO SURF HERE");
+
+					    var spot = spotToSurfOn;
+					    var user = jQuery(".stopSurfOnSpotUser").attr("value");
+
+					    $.ajaxSetup({
+
+							url: "http://127.0.0.1:3000/user/"+user+"/spot/"+spot+"/deleteSurferOnSpot",
+							type: "PUT",
+							data: {userId: user, spotId: spot},
+							headers: {Accept: "application/json"}
+
+						});
+
+						$.ajax({
+
+							success: function(data){
+
+								document.location.reload(true)
+								console.log("Stop surf in spot:", data);
+								window.location.replace("http://127.0.0.1:3000/user/"+user);
+							},
+							error: function(data, error){
+								document.location.reload(true)
+								console.log("Error when trying to stop surf on spot?", data, error);
 							}
 						});
 					});%>	
@@ -152,9 +186,7 @@
 						<label for="password">Password:</label>
 						<input type="password" name="password" id="password" value="" placeholder="Password"/>
 					</div>
-				</form>
-
-					 		 		
+				</form>					 		 		
 	        </div>
 	 
 	        <div data-role="footer" data-theme="f" data-position="fixed">
@@ -361,13 +393,14 @@
 				$.ajax({
 
 					success: function(data){
-
-						console.log("Follow spot", data);
 						document.location.reload(true)
+						console.log("Follow spot", data);
+						
 					},
 					error: function(data, error){
-						console.log("Error when trying follow spot?", data, error);
 						document.location.reload(true)
+						console.log("Error when trying follow spot?", data, error);
+						
 					}
 				});
 
@@ -400,7 +433,6 @@
 					},
 					error: function(data, error){
 						console.log("Error when trying to stop follow spot?", data, error);
-						confirm("Vill du verkligen sluta följa spoten?");
 						window.location.replace("http://127.0.0.1:8888/#user/"+user);
 					}
 				});
